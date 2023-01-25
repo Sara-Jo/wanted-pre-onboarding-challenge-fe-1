@@ -50,6 +50,8 @@ export default function Login() {
     }
   };
 
+  const handleLoginSubmit = (e: React.FormEvent<HTMLButtonElement>) => {};
+
   return (
     <Container>
       <LoginContainer>
@@ -62,7 +64,7 @@ export default function Login() {
               onBlur={handleOnblur}
             />
             <i>
-              <FaCheckCircle color={isEmailValid ? "#22AEAE" : "#D4D4D4"} />
+              <FaCheckCircle color={isEmailValid ? "#7286D3" : "#D4D4D4"} />
             </i>
             <span>{emailErrorMessage}</span>
           </InputWrapper>
@@ -77,14 +79,20 @@ export default function Login() {
               {isPasswordHidden ? (
                 <ImEyeBlocked size="16" color="#5B5B5B" />
               ) : (
-                <ImEye size="16" color="#22AEAE" />
+                <ImEye size="16" color="#7286D3" />
               )}
             </i>
             <span>{passwordErrorMessage}</span>
           </InputWrapper>
         </InputContainer>
         <LoginButtonContainer>
-          <LoginButton>LOGIN</LoginButton>
+          <LoginButton
+            type="submit"
+            disabled={!isEmailValid || password.length < 8}
+            onSubmit={handleLoginSubmit}
+          >
+            LOGIN
+          </LoginButton>
         </LoginButtonContainer>
       </LoginContainer>
     </Container>
@@ -145,8 +153,15 @@ const LoginButtonContainer = styled.div`
   justify-content: center;
 `;
 
-const LoginButton = styled.div`
+const LoginButton = styled.button`
   border: 1px solid black;
   padding: 0.5rem 1rem;
   margin-top: 1rem;
+  background-color: #7286d3;
+  color: white;
+  cursor: pointer;
+  &:disabled {
+    background-color: #d4d4d4;
+    cursor: not-allowed;
+  }
 `;
