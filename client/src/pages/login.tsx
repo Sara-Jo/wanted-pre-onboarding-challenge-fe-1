@@ -2,6 +2,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import { FaCheckCircle } from "react-icons/fa";
 import { ImEye, ImEyeBlocked } from "react-icons/im";
+import { login, signUp } from "../api/auth";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -10,6 +11,7 @@ export default function Login() {
   const [emailErrorMessage, setEmailErrorMessage] = useState("");
   const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
   const [isPasswordHidden, setIsPasswordHidden] = useState(true);
+  const [isLoginForm, setIsLoginForm] = useState(true);
 
   const checkEmail = () => {
     const [username, provider] = email.split("@");
@@ -50,7 +52,15 @@ export default function Login() {
     }
   };
 
-  const handleLoginSubmit = (e: React.FormEvent<HTMLButtonElement>) => {};
+  const handleLoginSubmit = async (e: React.FormEvent<HTMLButtonElement>) => {
+    const res = await login(email, password);
+    localStorage.setItem("user_token", res.token);
+  };
+
+  const handleCreateSubmit = (e: React.FormEvent<HTMLButtonElement>) => {
+    const res = signUp(email, password);
+    console.log(res);
+  };
 
   return (
     <Container>
@@ -85,15 +95,23 @@ export default function Login() {
             <span>{passwordErrorMessage}</span>
           </InputWrapper>
         </InputContainer>
-        <LoginButtonContainer>
+        <ButtonContainer>
           <LoginButton
             type="submit"
             disabled={!isEmailValid || password.length < 8}
-            onSubmit={handleLoginSubmit}
+            onClick={isLoginForm ? handleLoginSubmit : handleCreateSubmit}
           >
-            LOGIN
+            {isLoginForm ? "LOGIN" : "SIGN UP"}
           </LoginButton>
-        </LoginButtonContainer>
+          <div>
+            <span id="msg">
+              {isLoginForm ? "Need ad Account?" : "Already registered?"}
+            </span>
+            <span id="link" onClick={() => setIsLoginForm(!isLoginForm)}>
+              {isLoginForm ? "Sign up" : "Login"}
+            </span>
+          </div>
+        </ButtonContainer>
       </LoginContainer>
     </Container>
   );
@@ -148,9 +166,23 @@ const Input = styled.input`
   padding-left: 0.5rem;
 `;
 
-const LoginButtonContainer = styled.div`
+const ButtonContainer = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  align-items: center;
+  font-size: 0.9rem;
+  span#msg {
+    margin-top: 0.3rem;
+    display: inline-block;
+  }
+  span#link {
+    margin-top: 0.3rem;
+    margin-left: 0.4rem;
+    color: #7286d3;
+    cursor: pointer;
+    text-decoration: underline;
+  }
 `;
 
 const LoginButton = styled.button`
