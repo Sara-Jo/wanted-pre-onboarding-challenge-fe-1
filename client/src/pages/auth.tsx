@@ -5,7 +5,7 @@ import { ImEye, ImEyeBlocked } from "react-icons/im";
 import { login, signUp } from "../api/auth";
 import { useRouter } from "next/router";
 
-export default function Login() {
+export default function Auth() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
