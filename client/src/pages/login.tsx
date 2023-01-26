@@ -3,8 +3,10 @@ import styled from "styled-components";
 import { FaCheckCircle } from "react-icons/fa";
 import { ImEye, ImEyeBlocked } from "react-icons/im";
 import { login, signUp } from "../api/auth";
+import { useRouter } from "next/router";
 
 export default function Login() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isEmailValid, setIsEmailValid] = useState(false);
@@ -53,8 +55,13 @@ export default function Login() {
   };
 
   const handleLoginSubmit = async (e: React.FormEvent<HTMLButtonElement>) => {
-    const res = await login(email, password);
-    localStorage.setItem("user_token", res.token);
+    try {
+      const res = await login(email, password);
+      localStorage.setItem("user_token", res.token);
+      router.push("/");
+    } catch (error) {
+      alert("Please check that you typed email and password correctly.");
+    }
   };
 
   const handleCreateSubmit = (e: React.FormEvent<HTMLButtonElement>) => {
@@ -105,7 +112,7 @@ export default function Login() {
           </LoginButton>
           <div>
             <span id="msg">
-              {isLoginForm ? "Need ad Account?" : "Already registered?"}
+              {isLoginForm ? "Need an account?" : "Already registered?"}
             </span>
             <span id="link" onClick={() => setIsLoginForm(!isLoginForm)}>
               {isLoginForm ? "Sign up" : "Login"}
