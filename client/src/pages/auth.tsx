@@ -4,6 +4,7 @@ import { FaCheckCircle } from "react-icons/fa";
 import { ImEye, ImEyeBlocked } from "react-icons/im";
 import { login, signUp } from "../api/auth";
 import { useRouter } from "next/router";
+import useLogin from "@/hooks/useLogin";
 
 export default function Auth() {
   const router = useRouter();
@@ -14,6 +15,11 @@ export default function Auth() {
   const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
   const [isPasswordHidden, setIsPasswordHidden] = useState(true);
   const [isLoginForm, setIsLoginForm] = useState(true);
+  const {
+    data: loginData,
+    isSuccess: isLoginSuccess,
+    isError: isLoginError,
+  } = useLogin(email, password);
 
   const checkEmail = () => {
     const [username, provider] = email.split("@");
@@ -55,18 +61,20 @@ export default function Auth() {
   };
 
   const handleLoginSubmit = async (e: React.FormEvent<HTMLButtonElement>) => {
-    try {
-      const res = await login(email, password);
-      localStorage.setItem("user_token", res.token);
+    if (isLoginSuccess) {
+      localStorage.setItem("token", loginData.token);
       router.push("/");
-    } catch (error) {
-      alert("Please check that you typed email and password correctly.");
+    } else if (isLoginError) {
+      alert("Please check you entered email and password correctly.");
     }
   };
 
   const handleCreateSubmit = (e: React.FormEvent<HTMLButtonElement>) => {
-    const res = signUp(email, password);
-    console.log(res);
+    try {
+      const res = signUp(email, password);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
